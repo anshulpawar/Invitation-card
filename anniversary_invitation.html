@@ -721,6 +721,7 @@
 
 <script>
 // ── BACKGROUND AUDIO (FIRST 42s) ──
+const AUDIO_FILE = 'WhatsApp%20Audio%202026-04-28%20at%2012.49.42%20AM.mpeg';
 const END_TIME = 42;
 const bgAudio = document.getElementById('bgAudioEl');
 bgAudio.volume = 1;
@@ -728,10 +729,17 @@ bgAudio.muted = true;
 
 let audioStarted = false;
 
+function loadFreshAudio() {
+  bgAudio.src = `${AUDIO_FILE}?v=${Date.now()}`;
+  bgAudio.load();
+  bgAudio.currentTime = 0;
+  bgAudio.muted = true;
+  audioStarted = false;
+}
+
 function tryAutoPlayAudio() {
   if (bgAudio.currentTime >= END_TIME || bgAudio.ended) {
-    bgAudio.currentTime = 0;
-    audioStarted = false;
+    loadFreshAudio();
   }
   if (audioStarted && !bgAudio.paused) return;
   const playPromise = bgAudio.play();
@@ -751,16 +759,14 @@ function tryAutoPlayAudio() {
 }
 
 // Run audio attempts before other heavy script work.
+loadFreshAudio();
 tryAutoPlayAudio();
 requestAnimationFrame(tryAutoPlayAudio);
 setTimeout(tryAutoPlayAudio, 0);
 document.addEventListener('DOMContentLoaded', tryAutoPlayAudio);
 window.addEventListener('pageshow', () => {
   // Handles BFCache restores where old paused/ended state can persist.
-  audioStarted = false;
-  if (bgAudio.currentTime >= END_TIME || bgAudio.ended) {
-    bgAudio.currentTime = 0;
-  }
+  loadFreshAudio();
   tryAutoPlayAudio();
 });
 window.addEventListener('load', tryAutoPlayAudio);
@@ -774,12 +780,14 @@ bgAudio.addEventListener('playing', () => {
 
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) {
-    if (bgAudio.currentTime >= END_TIME || bgAudio.ended) {
-      bgAudio.currentTime = 0;
-      audioStarted = false;
-    }
+    if (bgAudio.currentTime >= END_TIME || bgAudio.ended) loadFreshAudio();
     tryAutoPlayAudio();
   }
+});
+window.addEventListener('pagehide', () => {
+  bgAudio.pause();
+  bgAudio.currentTime = 0;
+  audioStarted = false;
 });
 
 setInterval(() => {
