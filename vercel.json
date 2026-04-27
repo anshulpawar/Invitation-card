@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/anniversary_invitation.html"
+    }
+  ]
+}
