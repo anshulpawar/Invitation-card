@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manoj & Manisha – 25th Anniversary</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Great+Vibes&family=Cinzel:wght@400;600&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #C9922A;
+    --gold-light: #E8C97A;
+    --gold-pale: #F5E6C0;
+    --ivory: #FDF8EE;
+    --ivory-dark: #F4ECD8;
+    --brown: #6B4226;
+    --brown-dark: #3E2208;
+    --red-accent: #8B1A1A;
+    --pink-accent: #C4726A;
+    --cream: #FAF3E4;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: #1a0f05;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'EB Garamond', serif;
+    overflow: hidden;
+  }
+
+  /* ── CANVAS PARTICLES ── */
+  #particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+  /* ── CARD WRAPPER ── */
+  .card-wrap {
+    position: relative;
+    width: min(680px, 98vw);
+    max-height: 98vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 10;
+    scrollbar-width: none;
+  }
+  .card-wrap::-webkit-scrollbar { display: none; }
+
+  /* ── CARD BODY ── */
+  .card {
+    background: var(--ivory);
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(201,146,42,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(201,146,42,0.07) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    border: 1px solid var(--gold);
+    padding: 32px 40px 42px;
+    position: relative;
+    opacity: 0;
+    transform: scale(0.92);
+    animation: cardReveal 1.8s cubic-bezier(.16,1,.3,1) 0.5s forwards;
+  }
+
+  @keyframes cardReveal {
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* ── OUTER GOLD BORDER LINES ── */
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid var(--gold-light);
+    pointer-events: none;
+  }
+
+  /* ── CORNER ORNAMENTS ── */
+  .corner {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards;
+  }
+  .corner.tl { top: 4px; left: 4px; animation-delay: 1.2s; }
+  .corner.tr { top: 4px; right: 4px; transform: scaleX(-1); animation-delay: 1.4s; }
+  .corner.bl { bottom: 4px; left: 4px; transform: scaleY(-1); animation-delay: 1.6s; }
+  .corner.br { bottom: 4px; right: 4px; transform: scale(-1); animation-delay: 1.8s; }
+
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  /* ── GANESH TOP ── */
+  .ganesh {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    color: var(--red-accent);
+    letter-spacing: 2px;
+    margin-top: 24px;
+    margin-bottom: 6px;
+    opacity: 0;
+    animation: slideDown 1s ease 1.5s forwards;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── DIVIDER LINE ── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+    opacity: 0;
+    animation: fadeIn 1s ease 2s forwards;
+  }
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+  .divider-diamond {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ── HEADER TEXT ── */
+  .header-text {
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    font-size: 12.5px;
+    letter-spacing: 3.5px;
+    color: var(--brown);
+    text-transform: uppercase;
+    margin: 10px 0 6px;
+    opacity: 0;
+    animation: fadeIn 1s ease 2.2s forwards;
+  }
+
+  /* ── PHOTO STRIP ── */
+  .photo-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin: 14px 0 12px;
+    opacity: 0;
+    animation: fadeIn 1.2s ease 2.4s forwards;
+  }
+
+  .photo-frame {
+    position: relative;
+    width: 140px;
+    height: 176px;
+    flex-shrink: 0;
+  }
+  .photo-frame::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border: 1.5px solid var(--gold);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .photo-frame::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border: 1px solid rgba(201,146,42,0.4);
+    z-index: 1;
+    pointer-events: none;
+  }
+  .photo-frame img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+    filter: sepia(15%) contrast(1.05) brightness(1.02);
+  }
+
+  .photo-label {
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Great Vibes', cursive;
+    font-size: 13px;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+
+  .photo-center-ornament {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: var(--gold);
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .heart-anim {
+    animation: heartbeat 1.6s ease infinite;
+    font-size: 28px;
+    color: var(--red-accent);
+  }
+  @keyframes heartbeat {
+    0%,100% { transform: scale(1); }
+    14% { transform: scale(1.2); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.15); }
+    56% { transform: scale(1); }
+  }
+
+  /* ── NAMES ── */
+  .names-wrap {
+    text-align: center;
+    margin: 22px 0 6px;
+    opacity: 0;
+    animation: scaleIn 1.2s cubic-bezier(.16,1,.3,1) 2.8s forwards;
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .name {
+    font-family: 'Great Vibes', cursive;
+    font-size: 60px;
+    color: var(--brown-dark);
+    line-height: 1;
+    text-shadow: 1px 1px 0 rgba(201,146,42,0.3);
+  }
+  .name-amp {
+    font-family: 'Great Vibes', cursive;
+    font-size: 38px;
+    color: var(--gold);
+    display: block;
+    margin: 2px 0;
+  }
+
+  /* ── ANNIVERSARY BADGE ── */
+  .badge-wrap {
+    text-align: center;
+    margin: 14px 0 8px;
+    opacity: 0;
+    animation: fadeIn 1s ease 3.2s forwards;
+  }
+  .badge {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1.5px solid var(--gold);
+    padding: 8px 28px;
+    background: linear-gradient(135deg, rgba(201,146,42,0.08), rgba(201,146,42,0.03));
+    position: relative;
+  }
+  .badge::before, .badge::after {
+    content: '✦';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 10px;
+  }
+  .badge::before { left: 8px; }
+  .badge::after { right: 8px; }
+
+  .badge-num {
+    font-family: 'Cinzel', serif;
+    font-size: 40px;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+    letter-spacing: 2px;
+  }
+  .badge-text {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    color: var(--brown);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+  .badge-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    font-style: italic;
+    color: var(--brown);
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  /* ── DETAIL BLOCK ── */
+  .detail-block {
+    text-align: center;
+    margin: 14px 0 8px;
+    opacity: 0;
+    animation: fadeIn 1s ease 3.6s forwards;
+  }
+
+  .detail-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .detail-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    color: var(--brown-dark);
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+  .detail-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--brown);
+  }
+
+  .two-col {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin: 12px 0;
+  }
+  .col-item {
+    flex: 1;
+    text-align: center;
+    padding: 10px 8px;
+    border: 1px solid rgba(201,146,42,0.3);
+    background: rgba(201,146,42,0.04);
+    max-width: 180px;
+  }
+  .col-sep {
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    margin: 8px 0;
+  }
+
+  /* ── VENUE ── */
+  .venue-block {
+    text-align: center;
+    margin: 10px 0;
+    opacity: 0;
+    animation: fadeIn 1s ease 4s forwards;
+  }
+  .venue-name {
+    font-family: 'Cinzel', serif;
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--red-accent);
+    letter-spacing: 1.5px;
+    margin-bottom: 5px;
+  }
+  .venue-addr {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    color: var(--brown);
+    line-height: 1.7;
+  }
+
+  /* ── MESSAGE ── */
+  .message {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--brown);
+    line-height: 1.8;
+    margin: 14px 0;
+    padding: 14px 16px;
+    border-top: 1px solid rgba(201,146,42,0.3);
+    border-bottom: 1px solid rgba(201,146,42,0.3);
+    opacity: 0;
+    animation: fadeIn 1s ease 4.4s forwards;
+  }
+
+  /* ── CLOSING ── */
+  .closing {
+    text-align: center;
+    font-family: 'Great Vibes', cursive;
+    font-size: 28px;
+    color: var(--gold);
+    margin-top: 12px;
+    opacity: 0;
+    animation: fadeIn 1s ease 4.8s forwards;
+  }
+
+  /* ── FLORAL SVG ── */
+  .floral-top, .floral-bottom {
+    display: flex;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeIn 1.5s ease 2s forwards;
+  }
+  .floral-top { margin-bottom: 4px; }
+  .floral-bottom { margin-top: 8px; }
+  .floral-side {
+    position: absolute;
+    top: 202px;
+    font-size: 30px;
+    color: rgba(201,146,42,0.72);
+    opacity: 0;
+    animation: fadeIn 1s ease 2.8s forwards;
+    pointer-events: none;
+    text-shadow: 0 0 10px rgba(201,146,42,0.2);
+    z-index: 3;
+  }
+  .floral-side.left { left: 10px; transform: rotate(-12deg); }
+  .floral-side.right { right: 10px; transform: rotate(12deg); }
+  .flower-cascade {
+    position: absolute;
+    width: 26px;
+    line-height: 1.05;
+    text-align: center;
+    color: rgba(201,146,42,0.68);
+    font-size: 18px;
+    letter-spacing: 1px;
+    opacity: 0;
+    z-index: 3;
+    pointer-events: none;
+    text-shadow: 0 1px 5px rgba(201,146,42,0.2);
+    animation: fadeIn 1.2s ease forwards, flowerFloat 4.5s ease-in-out infinite;
+  }
+  .flower-cascade.left { left: 7px; top: 288px; animation-delay: 2.9s; }
+  .flower-cascade.right { right: 7px; top: 288px; animation-delay: 3.1s; }
+  .rose-medallion {
+    text-align: center;
+    color: rgba(196,114,106,0.78);
+    letter-spacing: 8px;
+    font-size: 19px;
+    margin: 6px 0 2px;
+    opacity: 0;
+    animation: fadeIn 1s ease 3s forwards;
+  }
+  .floral-ribbon {
+    text-align: center;
+    margin: 8px 0 6px;
+    color: rgba(201,146,42,0.78);
+    letter-spacing: 4px;
+    font-size: 12px;
+    opacity: 0;
+    animation: fadeIn 1s ease 3.9s forwards;
+  }
+  @keyframes flowerFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  /* ── SHIMMER OVERLAY ── */
+  .shimmer-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+    margin: 10px 0;
+    animation: shimmerMove 3s linear infinite;
+    background-size: 200% 100%;
+  }
+  @keyframes shimmerMove {
+    0% { background-position: -100% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  /* Staggered text reveal */
+  .reveal { opacity: 0; animation: fadeIn 0.8s ease forwards; }
+
+  #yt-player { position: fixed; left:-9999px; top:-9999px; width:1px; height:1px; }
+
+  /* ── MOBILE RESPONSIVE TUNING ── */
+  @media (max-width: 640px) {
+    .card-wrap {
+      width: 100vw;
+      padding: 0 6px;
+    }
+    .card {
+      padding: 24px 22px 30px;
+    }
+    .header-text {
+      font-size: 11px;
+      letter-spacing: 2.6px;
+    }
+    .photo-strip {
+      gap: 12px;
+    }
+    .photo-frame {
+      width: 126px;
+      height: 160px;
+    }
+    .name {
+      font-size: 52px;
+    }
+    .name-amp {
+      font-size: 34px;
+    }
+    .message {
+      font-size: 16.5px;
+      line-height: 1.7;
+    }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<audio id="bgAudioEl" autoplay preload="auto" playsinline webkit-playsinline>
+  <source src="WhatsApp Audio 2026-04-28 at 12.49.42 AM.mpeg" type="audio/mpeg">
+</audio>
+
+<div class="card-wrap">
+  <div class="card">
+
+    <!-- Corner ornaments -->
+    <svg class="corner tl" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 58 Q2 2 58 2" stroke="#C9922A" stroke-width="0.8" fill="none"/>
+      <circle cx="10" cy="10" r="2" fill="#C9922A"/>
+      <path d="M10 2 Q10 10 2 10" stroke="#C9922A" stroke-width="0.6" fill="none"/>
+      <path d="M18 4 C18 4 22 8 20 14 C18 20 24 22 24 22" stroke="#C9922A" stroke-width="0.8" fill="none"/>
+      <path d="M26 4 C28 6 25 10 28 13" stroke="#C9922A" stroke-width="0.6" fill="none"/>
+      <circle cx="22" cy="22" r="1.5" fill="#E8C97A"/>
+      <path d="M4 18 C6 18 9 15 9 20 C9 25 14 24 14 24" stroke="#C9922A" stroke-width="0.8" fill="none"/>
+      <path d="M4 26 C6 26 8 23 10 27" stroke="#C9922A" stroke-width="0.6" fill="none"/>
+      <circle cx="14" cy="30" r="1.5" fill="#E8C97A"/>
+      <!-- Rose -->
+      <path d="M30 2 C32 5 28 8 30 10 C32 12 36 10 35 7 C34 4 30 2 30 2Z" fill="rgba(196,114,106,0.5)" stroke="#C9922A" stroke-width="0.5"/>
+      <path d="M28 8 C26 10 27 14 30 13 C33 12 33 9 31 8" fill="rgba(196,114,106,0.3)" stroke="#C9922A" stroke-width="0.4"/>
+      <path d="M4 30 C7 32 5 36 8 36 C11 36 12 32 9 31 C6 30 4 30 4 30Z" fill="rgba(196,114,106,0.5)" stroke="#C9922A" stroke-width="0.5"/>
+    </svg>
+    <svg class="corner tr" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 58 Q2 2 58 2" stroke="#C9922A" stroke-width="0.8" fill="none"/>
+      <circle cx="10" cy="10" r="2" fill="#C9922A"/>
+      <path d="M10 2 Q10 10 2 10" stroke="#C9922A" stroke-width="0.6" fill="none"/>
+      <path d="M18 4 C18 4 22 8 20 14 C18 20 24 22 24 22" stroke="#C9922A" stroke-width="0.8" fill="none"/>
+      <circle cx="22" cy="22" r="1.5" fill="#E8C97A"/>
+      <path d="M4 18 C6 18 9 15 9 20 C9 25 14 24 14 24" stroke="#C9922A" stroke-width="0.8" fill="none"/>
+      <circle cx="14" cy="30" r="1.5" fill="#E8C97A"/>
+      <path d="M30 2 C32 5 28 8 30 10 C32 12 36 10 35 7 C34 4 30 2 30 2Z" fill="rgba(196,114,106,0.5)" stroke="#C9922A" stroke-width="0.5"/>
+      <path d="M4 30 C7 32 5 36 8 36 C11 36 12 32 9 31 C6 30 4 30 4 30Z" fill="rgba(196,114,106,0.5)" stroke="#C9922A" stroke-width="0.5"/>
+    </svg>
+    <svg class="corner bl" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 58 Q2 2 58 2" stroke="#C9922A" stroke-width="0.8" fill="none"/>
+      <circle cx="10" cy="10" r="2" fill="#C9922A"/>
+      <path d="M10 2 Q10 10 2 10" stroke="#C9922A" stroke-width="0.6" fill="none"/>
+      <path d="M18 4 C18 4 22 8 20 14 C18 20 24 22 24 22" stroke="#C9922A" stroke-width="0.8" fill="none"/>
+      <circle cx="22" cy="22" r="1.5" fill="#E8C97A"/>
+      <path d="M4 18 C6 18 9 15 9 20 C9 25 14 24 14 24" stroke="#C9922A" stroke-width="0.8" fill="none"/>
+      <circle cx="14" cy="30" r="1.5" fill="#E8C97A"/>
+      <path d="M30 2 C32 5 28 8 30 10 C32 12 36 10 35 7 C34 4 30 2 30 2Z" fill="rgba(196,114,106,0.5)" stroke="#C9922A" stroke-width="0.5"/>
+      <path d="M4 30 C7 32 5 36 8 36 C11 36 12 32 9 31 C6 30 4 30 4 30Z" fill="rgba(196,114,106,0.5)" stroke="#C9922A" stroke-width="0.5"/>
+    </svg>
+    <svg class="corner br" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 58 Q2 2 58 2" stroke="#C9922A" stroke-width="0.8" fill="none"/>
+      <circle cx="10" cy="10" r="2" fill="#C9922A"/>
+      <path d="M10 2 Q10 10 2 10" stroke="#C9922A" stroke-width="0.6" fill="none"/>
+      <path d="M18 4 C18 4 22 8 20 14 C18 20 24 22 24 22" stroke="#C9922A" stroke-width="0.8" fill="none"/>
+      <circle cx="22" cy="22" r="1.5" fill="#E8C97A"/>
+      <path d="M4 18 C6 18 9 15 9 20 C9 25 14 24 14 24" stroke="#C9922A" stroke-width="0.8" fill="none"/>
+      <circle cx="14" cy="30" r="1.5" fill="#E8C97A"/>
+      <path d="M30 2 C32 5 28 8 30 10 C32 12 36 10 35 7 C34 4 30 2 30 2Z" fill="rgba(196,114,106,0.5)" stroke="#C9922A" stroke-width="0.5"/>
+      <path d="M4 30 C7 32 5 36 8 36 C11 36 12 32 9 31 C6 30 4 30 4 30Z" fill="rgba(196,114,106,0.5)" stroke="#C9922A" stroke-width="0.5"/>
+    </svg>
+
+    <!-- Ganesh -->
+    <div class="ganesh">॥ श्री गणेशाय नमः ॥</div>
+
+    <!-- Top floral -->
+    <div class="floral-top">
+      <svg width="320" height="38" viewBox="0 0 320 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 19 Q40 5 80 19 Q120 33 160 19 Q200 5 240 19 Q280 33 320 19" stroke="#C9922A" stroke-width="0.8" fill="none" opacity="0.6"/>
+        <path d="M60 19 C60 10 70 4 80 8 C90 12 90 26 80 30 C70 34 60 28 60 19Z" fill="rgba(196,114,106,0.25)" stroke="#C9922A" stroke-width="0.6"/>
+        <path d="M230 19 C230 10 240 4 250 8 C260 12 260 26 250 30 C240 34 230 28 230 19Z" fill="rgba(196,114,106,0.25)" stroke="#C9922A" stroke-width="0.6"/>
+        <circle cx="160" cy="19" r="4" fill="#C9922A" opacity="0.7"/>
+        <circle cx="80" cy="19" r="2" fill="#E8C97A" opacity="0.8"/>
+        <circle cx="240" cy="19" r="2" fill="#E8C97A" opacity="0.8"/>
+        <path d="M140 12 C145 8 150 10 155 7 C160 4 165 8 170 12" stroke="#C9922A" stroke-width="0.7" fill="none"/>
+        <path d="M140 26 C145 30 150 28 155 31 C160 34 165 30 170 26" stroke="#C9922A" stroke-width="0.7" fill="none"/>
+        <!-- Small roses -->
+        <path d="M20 19 C22 16 25 17 24 20 C23 23 20 22 20 19Z" fill="rgba(139,26,26,0.3)" stroke="#C9922A" stroke-width="0.4"/>
+        <path d="M295 19 C297 16 300 17 299 20 C298 23 295 22 295 19Z" fill="rgba(139,26,26,0.3)" stroke="#C9922A" stroke-width="0.4"/>
+        <path d="M118 11 C120 8 123 9 122 12 C121 15 118 14 118 11Z" fill="rgba(196,114,106,0.4)" stroke="#C9922A" stroke-width="0.4"/>
+        <path d="M118 27 C120 24 123 25 122 28 C121 31 118 30 118 27Z" fill="rgba(196,114,106,0.4)" stroke="#C9922A" stroke-width="0.4"/>
+        <path d="M192 11 C194 8 197 9 196 12 C195 15 192 14 192 11Z" fill="rgba(196,114,106,0.4)" stroke="#C9922A" stroke-width="0.4"/>
+        <path d="M192 27 C194 24 197 25 196 28 C195 31 192 30 192 27Z" fill="rgba(196,114,106,0.4)" stroke="#C9922A" stroke-width="0.4"/>
+        <!-- Dots -->
+        <circle cx="40" cy="14" r="1" fill="#C9922A" opacity="0.5"/>
+        <circle cx="40" cy="24" r="1" fill="#C9922A" opacity="0.5"/>
+        <circle cx="280" cy="14" r="1" fill="#C9922A" opacity="0.5"/>
+        <circle cx="280" cy="24" r="1" fill="#C9922A" opacity="0.5"/>
+      </svg>
+    </div>
+
+    <!-- Header -->
+    <div class="header-text">You Are Cordially Invited To Celebrate</div>
+    <div class="floral-side left">✿</div>
+    <div class="floral-side right">❀</div>
+    <div class="flower-cascade left">❁<br>✿<br>❀</div>
+    <div class="flower-cascade right">❀<br>✿<br>❁</div>
+
+    <!-- Divider -->
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-diamond"></div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- Photo Strip -->
+    <div class="photo-strip">
+      <!-- Old photo frame -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:22px;">
+        <div class="photo-frame" id="oldPhotoFrame">
+          <img src="WhatsApp Image 2026-04-27 at 8.02.08 PM(1).jpeg" alt="Then photo">
+        </div>
+        <div style="font-family:'Cinzel',serif;font-size:7px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-top:4px;">Then</div>
+      </div>
+
+      <!-- Center ornament -->
+      <div class="photo-center-ornament">
+        <span style="font-size:11px;color:var(--gold);letter-spacing:1px;">✦</span>
+        <span class="heart-anim">♥</span>
+        <span style="font-size:11px;color:var(--gold);letter-spacing:1px;">✦</span>
+      </div>
+
+      <!-- New photo frame -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:22px;">
+        <div class="photo-frame">
+          <img src="WhatsApp Image 2026-04-27 at 7.02.44 PM.jpeg" alt="Now photo">
+        </div>
+        <div style="font-family:'Cinzel',serif;font-size:7px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-top:4px;">Now</div>
+      </div>
+    </div>
+
+    <!-- Names -->
+    <div class="names-wrap">
+      <div class="name">Manoj Kumar</div>
+      <span class="name-amp">&amp;</span>
+      <div class="name">Manisha Singh</div>
+    </div>
+
+    <!-- Anniversary Badge -->
+    <div class="badge-wrap">
+      <div class="rose-medallion">✿ ✦ ❀ ✦ ✿</div>
+      <div class="badge">
+        <div class="badge-num">25</div>
+        <div class="badge-text">25th Wedding Anniversary</div>
+        <div class="badge-sub">Celebration</div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider" style="opacity:0;animation:fadeIn 1s ease 3.4s forwards;">
+      <div class="divider-line"></div>
+      <div class="divider-diamond"></div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- Date & Time -->
+    <div class="detail-block">
+      <div class="two-col">
+        <div class="col-item">
+          <div class="detail-label">Date</div>
+          <div class="detail-value">May 04</div>
+          <div class="detail-sub">2026</div>
+        </div>
+        <div class="col-sep"></div>
+        <div class="col-item">
+          <div class="detail-label">Time</div>
+          <div class="detail-value">8:30</div>
+          <div class="detail-sub">in the evening</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Venue -->
+    <div class="venue-block">
+      <div class="detail-label" style="opacity:0;animation:fadeIn 1s ease 3.8s forwards;">Venue</div>
+      <div class="venue-name" style="opacity:0;animation:fadeIn 1s ease 4s forwards;">Barbeque Nation</div>
+      <div class="venue-addr" style="opacity:0;animation:fadeIn 1s ease 4.1s forwards;">
+        No 48, 3rd Floor, Max Building<br>
+        Circular Rd, next to Pantaloons Store<br>
+        Ajit Enclave, New Barhi Toli
+      </div>
+    </div>
+
+    <!-- Shimmer line -->
+    <div class="shimmer-line" style="opacity:0;animation:fadeIn 1s ease 4.3s forwards,shimmerMove 3s linear infinite 4.3s;"></div>
+    <div class="floral-ribbon">❀ ✦ ✿ ✦ ❀</div>
+
+    <!-- Message -->
+    <div class="message">
+      With hearts full of love and gratitude,<br>
+      we invite you to celebrate <em>25 beautiful years</em><br>
+      of togetherness, laughter, and cherished memories.<br>
+      Your presence will make this evening even more special.
+    </div>
+
+    <!-- Bottom floral -->
+    <div class="floral-bottom" style="animation-delay:4.5s;">
+      <svg width="320" height="38" viewBox="0 0 320 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 19 Q40 33 80 19 Q120 5 160 19 Q200 33 240 19 Q280 5 320 19" stroke="#C9922A" stroke-width="0.8" fill="none" opacity="0.6"/>
+        <circle cx="160" cy="19" r="4" fill="#C9922A" opacity="0.7"/>
+        <circle cx="80" cy="19" r="2" fill="#E8C97A" opacity="0.8"/>
+        <circle cx="240" cy="19" r="2" fill="#E8C97A" opacity="0.8"/>
+        <path d="M60 19 C60 10 70 4 80 8 C90 12 90 26 80 30 C70 34 60 28 60 19Z" fill="rgba(196,114,106,0.25)" stroke="#C9922A" stroke-width="0.6"/>
+        <path d="M230 19 C230 10 240 4 250 8 C260 12 260 26 250 30 C240 34 230 28 230 19Z" fill="rgba(196,114,106,0.25)" stroke="#C9922A" stroke-width="0.6"/>
+        <path d="M140 12 C145 8 150 10 155 7 C160 4 165 8 170 12" stroke="#C9922A" stroke-width="0.7" fill="none"/>
+        <path d="M140 26 C145 30 150 28 155 31 C160 34 165 30 170 26" stroke="#C9922A" stroke-width="0.7" fill="none"/>
+      </svg>
+    </div>
+
+    <!-- Closing -->
+    <div class="closing">Kindly grace the occasion with your presence ✦</div>
+
+  </div><!-- /card -->
+</div><!-- /card-wrap -->
+
+<script>
+// ── GOLD PARTICLE CANVAS ──
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+const particles = [];
+const COLORS = ['#C9922A','#E8C97A','#F5E6C0','#fff8e0','#d4a843'];
+
+for (let i = 0; i < 80; i++) {
+  particles.push({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    r: Math.random() * 2 + 0.5,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: -Math.random() * 0.5 - 0.2,
+    alpha: Math.random() * 0.7 + 0.2,
+    life: Math.random(),
+    decay: Math.random() * 0.002 + 0.001,
+    shape: Math.random() > 0.7 ? 'star' : 'circle'
+  });
+}
+
+function drawStar(cx, cy, r, alpha, color) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  for (let i = 0; i < 4; i++) {
+    const angle = (i * Math.PI) / 2;
+    ctx.lineTo(cx + Math.cos(angle) * r * 2, cy + Math.sin(angle) * r * 2);
+    ctx.lineTo(cx + Math.cos(angle + Math.PI/4) * r, cy + Math.sin(angle + Math.PI/4) * r);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life -= p.decay;
+    p.alpha = p.life * 0.8;
+
+    if (p.life <= 0) {
+      p.x = Math.random() * canvas.width;
+      p.y = canvas.height + 10;
+      p.life = 1;
+      p.alpha = 0;
+      p.vy = -Math.random() * 0.5 - 0.2;
+    }
+
+    if (p.shape === 'star') {
+      drawStar(p.x, p.y, p.r, p.alpha, p.color);
+    } else {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.alpha;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+  });
+
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ── ROSE PETALS ──
+const petals = [];
+for (let i = 0; i < 12; i++) {
+  petals.push({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * -window.innerHeight,
+    r: Math.random() * 8 + 5,
+    rotation: Math.random() * 360,
+    rotSpeed: (Math.random() - 0.5) * 2,
+    vx: (Math.random() - 0.5) * 1,
+    vy: Math.random() * 1.2 + 0.5,
+    alpha: Math.random() * 0.4 + 0.2,
+    color: Math.random() > 0.5 ? 'rgba(178,34,34,0.4)' : 'rgba(201,146,42,0.35)'
+  });
+}
+
+const petalCanvas = document.createElement('canvas');
+petalCanvas.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:5;';
+document.body.appendChild(petalCanvas);
+const pctx = petalCanvas.getContext('2d');
+
+function resizePetal() { petalCanvas.width = window.innerWidth; petalCanvas.height = window.innerHeight; }
+resizePetal();
+window.addEventListener('resize', resizePetal);
+
+function animatePetals() {
+  pctx.clearRect(0, 0, petalCanvas.width, petalCanvas.height);
+  petals.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.rotation += p.rotSpeed;
+    if (p.y > petalCanvas.height + 20) {
+      p.y = -20;
+      p.x = Math.random() * petalCanvas.width;
+    }
+    pctx.save();
+    pctx.translate(p.x, p.y);
+    pctx.rotate(p.rotation * Math.PI / 180);
+    pctx.globalAlpha = p.alpha;
+    pctx.fillStyle = p.color;
+    pctx.beginPath();
+    pctx.ellipse(0, 0, p.r, p.r * 1.6, 0, 0, Math.PI * 2);
+    pctx.fill();
+    pctx.restore();
+  });
+  requestAnimationFrame(animatePetals);
+}
+animatePetals();
+
+// ── BACKGROUND AUDIO (FIRST 42s) ──
+const END_TIME = 42;
+const bgAudio = document.getElementById('bgAudioEl');
+bgAudio.volume = 0.9;
+bgAudio.currentTime = 0;
+
+let audioStarted = false;
+
+function tryAutoPlayAudio() {
+  if (audioStarted) return;
+  const playPromise = bgAudio.play();
+  if (playPromise && typeof playPromise.catch === 'function') {
+    playPromise
+      .then(() => { audioStarted = true; })
+      .catch(() => {});
+  } else {
+    audioStarted = !bgAudio.paused;
+  }
+}
+
+// Try immediately and on earliest lifecycle events
+tryAutoPlayAudio();
+requestAnimationFrame(tryAutoPlayAudio);
+setTimeout(tryAutoPlayAudio, 0);
+document.addEventListener('DOMContentLoaded', tryAutoPlayAudio);
+window.addEventListener('pageshow', tryAutoPlayAudio);
+window.addEventListener('load', tryAutoPlayAudio);
+bgAudio.addEventListener('canplay', tryAutoPlayAudio);
+bgAudio.addEventListener('loadedmetadata', tryAutoPlayAudio);
+bgAudio.addEventListener('loadeddata', tryAutoPlayAudio);
+
+// Fallback for browsers that require user gesture
+window.addEventListener('pointerdown', tryAutoPlayAudio, { once: true, passive: true });
+window.addEventListener('touchstart', tryAutoPlayAudio, { once: true, passive: true });
+window.addEventListener('click', tryAutoPlayAudio, { once: true, passive: true });
+window.addEventListener('keydown', tryAutoPlayAudio, { once: true });
+
+setInterval(() => {
+  if (!bgAudio.paused && bgAudio.currentTime >= END_TIME) {
+    bgAudio.pause();
+    bgAudio.currentTime = END_TIME;
+  }
+}, 200);
+</script>
+</body>
+</html>
