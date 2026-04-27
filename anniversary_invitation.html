@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manoj & Manisha – 25th Anniversary</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Great+Vibes&family=Cinzel:wght@400;600&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
-<link rel="preload" href="WhatsApp Audio 2026-04-28 at 12.49.42 AM.mpeg" as="audio" type="audio/mpeg">
+<link rel="preload" href="WhatsApp%20Audio%202026-04-28%20at%2012.49.42%20AM.mpeg" as="audio" type="audio/mpeg">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -510,7 +510,7 @@
 
 <canvas id="particles"></canvas>
 <audio id="bgAudioEl" autoplay preload="auto" playsinline webkit-playsinline>
-  <source src="WhatsApp Audio 2026-04-28 at 12.49.42 AM.mpeg" type="audio/mpeg">
+  <source src="WhatsApp%20Audio%202026-04-28%20at%2012.49.42%20AM.mpeg" type="audio/mpeg">
 </audio>
 
 <div class="card-wrap">
@@ -723,8 +723,8 @@
 // ── BACKGROUND AUDIO (FIRST 42s) ──
 const END_TIME = 42;
 const bgAudio = document.getElementById('bgAudioEl');
-bgAudio.volume = 0.9;
-bgAudio.currentTime = 0;
+bgAudio.volume = 1;
+bgAudio.muted = true;
 
 let audioStarted = false;
 
@@ -735,17 +735,11 @@ function tryAutoPlayAudio() {
     playPromise
       .then(() => {
         audioStarted = true;
+        // Chrome allows muted autoplay; unmute right after it starts.
+        setTimeout(() => { bgAudio.muted = false; }, 80);
       })
       .catch(() => {
-        // Fallback attempt: muted autoplay may start sooner on some mobile browsers.
-        bgAudio.muted = true;
-        const mutedTry = bgAudio.play();
-        if (mutedTry && typeof mutedTry.then === 'function') {
-          mutedTry.then(() => {
-            audioStarted = true;
-            setTimeout(() => { bgAudio.muted = false; }, 120);
-          }).catch(() => {});
-        }
+        // Keep muted and retry on next events/user gesture.
       });
   } else {
     audioStarted = !bgAudio.paused;
@@ -768,6 +762,9 @@ window.addEventListener('pointerdown', tryAutoPlayAudio, { once: true, passive: 
 window.addEventListener('touchstart', tryAutoPlayAudio, { once: true, passive: true });
 window.addEventListener('click', tryAutoPlayAudio, { once: true, passive: true });
 window.addEventListener('keydown', tryAutoPlayAudio, { once: true });
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) tryAutoPlayAudio();
+});
 
 setInterval(() => {
   if (!bgAudio.paused && bgAudio.currentTime >= END_TIME) {
