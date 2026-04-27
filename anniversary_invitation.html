@@ -729,7 +729,11 @@ bgAudio.muted = true;
 let audioStarted = false;
 
 function tryAutoPlayAudio() {
-  if (audioStarted) return;
+  if (bgAudio.currentTime >= END_TIME || bgAudio.ended) {
+    bgAudio.currentTime = 0;
+    audioStarted = false;
+  }
+  if (audioStarted && !bgAudio.paused) return;
   const playPromise = bgAudio.play();
   if (playPromise && typeof playPromise.catch === 'function') {
     playPromise
@@ -751,7 +755,14 @@ tryAutoPlayAudio();
 requestAnimationFrame(tryAutoPlayAudio);
 setTimeout(tryAutoPlayAudio, 0);
 document.addEventListener('DOMContentLoaded', tryAutoPlayAudio);
-window.addEventListener('pageshow', tryAutoPlayAudio);
+window.addEventListener('pageshow', () => {
+  // Handles BFCache restores where old paused/ended state can persist.
+  audioStarted = false;
+  if (bgAudio.currentTime >= END_TIME || bgAudio.ended) {
+    bgAudio.currentTime = 0;
+  }
+  tryAutoPlayAudio();
+});
 window.addEventListener('load', tryAutoPlayAudio);
 bgAudio.addEventListener('canplay', tryAutoPlayAudio);
 bgAudio.addEventListener('loadedmetadata', tryAutoPlayAudio);
@@ -762,7 +773,13 @@ bgAudio.addEventListener('playing', () => {
 });
 
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) tryAutoPlayAudio();
+  if (!document.hidden) {
+    if (bgAudio.currentTime >= END_TIME || bgAudio.ended) {
+      bgAudio.currentTime = 0;
+      audioStarted = false;
+    }
+    tryAutoPlayAudio();
+  }
 });
 
 setInterval(() => {
