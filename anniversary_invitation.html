@@ -509,7 +509,7 @@
 <body>
 
 <canvas id="particles"></canvas>
-<audio id="bgAudioEl" autoplay preload="auto" playsinline webkit-playsinline>
+<audio id="bgAudioEl" autoplay muted preload="auto" playsinline webkit-playsinline>
   <source src="WhatsApp%20Audio%202026-04-28%20at%2012.49.42%20AM.mpeg" type="audio/mpeg">
 </audio>
 
@@ -739,7 +739,7 @@ function tryAutoPlayAudio() {
         setTimeout(() => { bgAudio.muted = false; }, 80);
       })
       .catch(() => {
-        // Keep muted and retry on next events/user gesture.
+        // Keep muted and retry on next lifecycle events.
       });
   } else {
     audioStarted = !bgAudio.paused;
@@ -756,12 +756,11 @@ window.addEventListener('load', tryAutoPlayAudio);
 bgAudio.addEventListener('canplay', tryAutoPlayAudio);
 bgAudio.addEventListener('loadedmetadata', tryAutoPlayAudio);
 bgAudio.addEventListener('loadeddata', tryAutoPlayAudio);
+bgAudio.addEventListener('playing', () => {
+  audioStarted = true;
+  setTimeout(() => { bgAudio.muted = false; }, 80);
+});
 
-// Fallback for browsers requiring user interaction.
-window.addEventListener('pointerdown', tryAutoPlayAudio, { once: true, passive: true });
-window.addEventListener('touchstart', tryAutoPlayAudio, { once: true, passive: true });
-window.addEventListener('click', tryAutoPlayAudio, { once: true, passive: true });
-window.addEventListener('keydown', tryAutoPlayAudio, { once: true });
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) tryAutoPlayAudio();
 });
