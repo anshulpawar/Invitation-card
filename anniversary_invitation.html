@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manoj & Manisha – 25th Anniversary</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Great+Vibes&family=Cinzel:wght@400;600&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
+<link rel="preload" href="WhatsApp Audio 2026-04-28 at 12.49.42 AM.mpeg" as="audio" type="audio/mpeg">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -719,6 +720,62 @@
 </div><!-- /card-wrap -->
 
 <script>
+// ── BACKGROUND AUDIO (FIRST 42s) ──
+const END_TIME = 42;
+const bgAudio = document.getElementById('bgAudioEl');
+bgAudio.volume = 0.9;
+bgAudio.currentTime = 0;
+
+let audioStarted = false;
+
+function tryAutoPlayAudio() {
+  if (audioStarted) return;
+  const playPromise = bgAudio.play();
+  if (playPromise && typeof playPromise.catch === 'function') {
+    playPromise
+      .then(() => {
+        audioStarted = true;
+      })
+      .catch(() => {
+        // Fallback attempt: muted autoplay may start sooner on some mobile browsers.
+        bgAudio.muted = true;
+        const mutedTry = bgAudio.play();
+        if (mutedTry && typeof mutedTry.then === 'function') {
+          mutedTry.then(() => {
+            audioStarted = true;
+            setTimeout(() => { bgAudio.muted = false; }, 120);
+          }).catch(() => {});
+        }
+      });
+  } else {
+    audioStarted = !bgAudio.paused;
+  }
+}
+
+// Run audio attempts before other heavy script work.
+tryAutoPlayAudio();
+requestAnimationFrame(tryAutoPlayAudio);
+setTimeout(tryAutoPlayAudio, 0);
+document.addEventListener('DOMContentLoaded', tryAutoPlayAudio);
+window.addEventListener('pageshow', tryAutoPlayAudio);
+window.addEventListener('load', tryAutoPlayAudio);
+bgAudio.addEventListener('canplay', tryAutoPlayAudio);
+bgAudio.addEventListener('loadedmetadata', tryAutoPlayAudio);
+bgAudio.addEventListener('loadeddata', tryAutoPlayAudio);
+
+// Fallback for browsers requiring user interaction.
+window.addEventListener('pointerdown', tryAutoPlayAudio, { once: true, passive: true });
+window.addEventListener('touchstart', tryAutoPlayAudio, { once: true, passive: true });
+window.addEventListener('click', tryAutoPlayAudio, { once: true, passive: true });
+window.addEventListener('keydown', tryAutoPlayAudio, { once: true });
+
+setInterval(() => {
+  if (!bgAudio.paused && bgAudio.currentTime >= END_TIME) {
+    bgAudio.pause();
+    bgAudio.currentTime = END_TIME;
+  }
+}, 200);
+
 // ── GOLD PARTICLE CANVAS ──
 const canvas = document.getElementById('particles');
 const ctx = canvas.getContext('2d');
@@ -845,49 +902,6 @@ function animatePetals() {
 }
 animatePetals();
 
-// ── BACKGROUND AUDIO (FIRST 42s) ──
-const END_TIME = 42;
-const bgAudio = document.getElementById('bgAudioEl');
-bgAudio.volume = 0.9;
-bgAudio.currentTime = 0;
-
-let audioStarted = false;
-
-function tryAutoPlayAudio() {
-  if (audioStarted) return;
-  const playPromise = bgAudio.play();
-  if (playPromise && typeof playPromise.catch === 'function') {
-    playPromise
-      .then(() => { audioStarted = true; })
-      .catch(() => {});
-  } else {
-    audioStarted = !bgAudio.paused;
-  }
-}
-
-// Try immediately and on earliest lifecycle events
-tryAutoPlayAudio();
-requestAnimationFrame(tryAutoPlayAudio);
-setTimeout(tryAutoPlayAudio, 0);
-document.addEventListener('DOMContentLoaded', tryAutoPlayAudio);
-window.addEventListener('pageshow', tryAutoPlayAudio);
-window.addEventListener('load', tryAutoPlayAudio);
-bgAudio.addEventListener('canplay', tryAutoPlayAudio);
-bgAudio.addEventListener('loadedmetadata', tryAutoPlayAudio);
-bgAudio.addEventListener('loadeddata', tryAutoPlayAudio);
-
-// Fallback for browsers that require user gesture
-window.addEventListener('pointerdown', tryAutoPlayAudio, { once: true, passive: true });
-window.addEventListener('touchstart', tryAutoPlayAudio, { once: true, passive: true });
-window.addEventListener('click', tryAutoPlayAudio, { once: true, passive: true });
-window.addEventListener('keydown', tryAutoPlayAudio, { once: true });
-
-setInterval(() => {
-  if (!bgAudio.paused && bgAudio.currentTime >= END_TIME) {
-    bgAudio.pause();
-    bgAudio.currentTime = END_TIME;
-  }
-}, 200);
 </script>
 </body>
 </html>
