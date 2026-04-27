@@ -504,6 +504,53 @@
       line-height: 1.7;
     }
   }
+
+  /* ── TAP TO START MUSIC OVERLAY ── */
+  .audio-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, rgba(62,34,8,0.55), rgba(26,15,5,0.86));
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+  .audio-gate.show { display: flex; }
+  .audio-gate-card {
+    width: min(420px, 90vw);
+    border: 1px solid rgba(201,146,42,0.6);
+    background: linear-gradient(145deg, rgba(253,248,238,0.95), rgba(244,236,216,0.94));
+    color: var(--brown-dark);
+    text-align: center;
+    padding: 20px 18px 18px;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.35);
+  }
+  .audio-gate-title {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--brown-dark);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .audio-gate-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    margin-bottom: 12px;
+  }
+  .audio-gate-btn {
+    border: 1px solid var(--gold);
+    background: linear-gradient(135deg, #d7ac52, #b07a24);
+    color: #fffef8;
+    padding: 10px 20px;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
@@ -512,6 +559,13 @@
 <audio id="bgAudioEl" autoplay muted preload="auto" playsinline webkit-playsinline>
   <source src="WhatsApp%20Audio%202026-04-28%20at%2012.49.42%20AM.mpeg" type="audio/mpeg">
 </audio>
+<div id="audioGate" class="audio-gate" aria-hidden="true">
+  <div class="audio-gate-card">
+    <div class="audio-gate-title">Welcome</div>
+    <div class="audio-gate-sub">Tap once to start music</div>
+    <button id="audioGateBtn" class="audio-gate-btn" type="button">Enter Invitation</button>
+  </div>
+</div>
 
 <div class="card-wrap">
   <div class="card">
@@ -724,6 +778,8 @@
 const AUDIO_FILE = 'WhatsApp%20Audio%202026-04-28%20at%2012.49.42%20AM.mpeg';
 const END_TIME = 42;
 const bgAudio = document.getElementById('bgAudioEl');
+const audioGate = document.getElementById('audioGate');
+const audioGateBtn = document.getElementById('audioGateBtn');
 bgAudio.volume = 1;
 bgAudio.muted = true;
 
@@ -748,10 +804,15 @@ function tryAutoPlayAudio() {
       .then(() => {
         audioStarted = true;
         // Chrome allows muted autoplay; unmute right after it starts.
-        setTimeout(() => { bgAudio.muted = false; }, 80);
+        setTimeout(() => {
+          bgAudio.muted = false;
+          if (bgAudio.muted || bgAudio.paused) audioGate.classList.add('show');
+          else audioGate.classList.remove('show');
+        }, 80);
       })
       .catch(() => {
         // Keep muted and retry on next lifecycle events.
+        audioGate.classList.add('show');
       });
   } else {
     audioStarted = !bgAudio.paused;
@@ -775,7 +836,29 @@ bgAudio.addEventListener('loadedmetadata', tryAutoPlayAudio);
 bgAudio.addEventListener('loadeddata', tryAutoPlayAudio);
 bgAudio.addEventListener('playing', () => {
   audioStarted = true;
-  setTimeout(() => { bgAudio.muted = false; }, 80);
+  setTimeout(() => {
+    bgAudio.muted = false;
+    if (!bgAudio.paused && !bgAudio.muted) audioGate.classList.remove('show');
+  }, 80);
+});
+
+function startAudioFromTap() {
+  bgAudio.muted = false;
+  bgAudio.currentTime = 0;
+  const p = bgAudio.play();
+  if (p && typeof p.then === 'function') {
+    p.then(() => {
+      audioStarted = true;
+      audioGate.classList.remove('show');
+    }).catch(() => {});
+  } else {
+    audioStarted = !bgAudio.paused;
+    if (audioStarted) audioGate.classList.remove('show');
+  }
+}
+audioGateBtn.addEventListener('click', startAudioFromTap);
+audioGate.addEventListener('click', (e) => {
+  if (e.target === audioGate) startAudioFromTap();
 });
 
 document.addEventListener('visibilitychange', () => {
